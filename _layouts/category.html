@@ -1,8 +1,16 @@
 ---
 layout: default
+category: posts
 ---
+{% assign catName = site.categories[page.category] %}
+{% if page.index %}
+{% assign catName = site.posts %}
+{% endif %}
+
+{% for post in catName %}
 <div class="blog-post">
     <h2 class="blog-post-title"><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h2>
     <p class="blog-post-meta">{{ post.date | date: site.date_format }} by <a href="#">Christian Xiao</a></p>
-    {{ content }}
+    {{ post.excerpt | strip_html }}
 </div>
+{% endfor %}

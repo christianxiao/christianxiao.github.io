@@ -13,6 +13,7 @@
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="{{ "/assets/bootstrap-3.3.7-dist/css/bootstrap.min.css" | relative_url }}">
+    <link rel="stylesheet" href="{{ "/assets/blog.css" | relative_url }}">
     <link rel="stylesheet" href="{{ "/assets/index.css" | relative_url }}">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -23,25 +24,58 @@
     <![endif]-->
   </head>
   <body>
-    <logo>This is the logo</logo>
-    <nav>
-      {% for category in site.categories %}
-        <li><a name="{{ category | first }}">{{ category[0] | capitalize }} ({{ category[1].size }})</a>
-          <ul>
-          {% for posts in category %}
-            {% for post in posts %}
-              {% if post.url %}
-                <li><a href="{{ post.url }}">{{ post.title }}</a></li>
-              {% endif %}
-            {% endfor %}
-          {% endfor %}
-          </ul>
-        </li>
-    {% endfor %}
-    </nav>
 
-    <div>{{ content }}</div>
-    <footer>This is footer</footer>
+  <!-- Fixed navbar -->
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <span class="navbar-brand">Pro Full Stack</span>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="/index.html">Home</a></li>
+          <li><a href="/programming.html">Programming</a></li>
+          <li><a href="/hotpot.html">Hotpot/杂谈</a></li>
+          <li><a href="/about.html">About</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="https://github.com/profullstack" target="_blank">GitHub</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div>
+  </nav>
+
+
+  <div class="container">
+
+    <div class="blog-header">
+      <h5 class="blog-title">The Way to Pro Full Stack</h5>
+      <p class="lead blog-description">Do things in a simple way</p>
+    </div>
+
+    <div class="row">
+
+      <div class="col-sm-8 blog-main">
+
+        {{ content }}
+
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="blog-footer">
+    <p>Powered By <a href="https://jekyllrb.com/">Jekyll</a> & <a href="http://getbootstrap.com/">Bootstrap</a></p>
+    <p>
+      <a href="#">Back to top</a>
+    </p>
+  </footer>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{{ "/assets/jquery.min.js" | relative_url }}"></script>
