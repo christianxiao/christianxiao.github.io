@@ -3,6 +3,7 @@ layout: post
 title: Spring Seed: A J2EE Spring framework seed project
 category: programming
 ---
+
 A seed project based on Spring Framework family, including Spring Data JPA, Spring Data Redis and so on.
 
 ## Why this project
