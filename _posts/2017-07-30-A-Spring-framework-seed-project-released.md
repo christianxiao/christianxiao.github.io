@@ -31,7 +31,7 @@ compile 'com.profullstack:spring-seed:1.0.0'
 ```
 <dependency>
   <groupId>com.profullstack</groupId>
-  <artifactId>spring-seed</artifactId>
+  <artifactId>spring-seed</artifactId> 
   <version>1.0.0</version>
   <type>pom</type>
 </dependency>
