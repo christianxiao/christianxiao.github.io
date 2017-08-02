@@ -3,6 +3,8 @@ layout: post
 title: An implementation of CJK MMSEG tokenizer algorithm with Sogou Dictionary.
 category: programming
 ---
+
+
 An implementation of CJK [MMSEG](http://technology.chtsai.org/mmseg/) tokenizer algorithm with Sogou Chinese Dictionary.
 
 Implementation Details:
