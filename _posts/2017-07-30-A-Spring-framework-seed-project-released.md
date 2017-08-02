@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Spring Seed: A J2EE Spring framework seed project
+title: Spring Seed -- A J2EE Spring framework seed project
 category: programming
 ---
 
