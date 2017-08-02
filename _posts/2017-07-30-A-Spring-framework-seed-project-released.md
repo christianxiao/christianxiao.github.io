@@ -27,8 +27,10 @@ This project is hosted on Jcenter:
 ```
 compile 'com.profullstack:spring-seed:1.0.0'
 ```
+
 - Maven
-```
+  
+```xml
 <dependency>
   <groupId>com.profullstack</groupId>
   <artifactId>spring-seed</artifactId> 
