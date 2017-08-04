@@ -8,6 +8,7 @@ When we are going to use a ```List```, we were taught to write the following the
 List list = new ArrayList<>();
 ```
 And to avoid another ```List``` implementation: ```LinkedList```, is this always true and why?
+
 ## JDK ArrayList internal
 ```ArrayList``` is an array based implementation, but array can only have fixed length, so what will happen is we try to add a new element? The solution is quite simple, just create a new array with longer length, and copy the elements from old array to the new array. We can check the JDK source code to have a look.
 
