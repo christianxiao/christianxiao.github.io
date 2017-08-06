@@ -134,9 +134,59 @@ public @interface ExpirableCacheable {
 - A distributed lock implemantation ```SimpleRedisDlmLock``` based on Redis. Check [here](https://redis.io/topics/distlock) for more details.
 
 ### Batch module
-TODO
+```@EnableBatchProcessing``` is the native Spring Batch configuration, but you need to set up the batch database to use it for Spring batch need somewhere to store its metadata. Sometimes we don't want to set up a batch db, so [```@EnableSpringSeedBatchProcessing```](https://github.com/profullstack/spring-seed/blob/master/src/main/java/com/profullstack/springseed/core/batch/EnableSpringSeedBatchProcessing.java) is the replacement. It uses a in-memory Map to store the metadata, and a ResourcelessTransaction to handle transactions.  
+```
+@Configuration
+//@EnableBatchProcessing
+@EnableSpringSeedBatchProcessing
+@Import(value={DomainContextConfig.class})
+@ComponentScan(basePackageClasses = {Batchs.class})
+public class BatchContextConfig {
+}
+```
+Writing a simple batch job could also be complex, expecially when you just need a simple one step job. You need to define a job, a step and a tasklet. To simplify this process, you only need to extend the [```AbstractTaskletJob```](https://github.com/profullstack/spring-seed/blob/master/src/main/java/com/profullstack/springseed/core/batch/AbstractTaskletJob.java).
+```
+@Component
+@Slf4j
+public class SampleJob extends AbstractTaskletJob {
+
+    @Override
+    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+        JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
+
+        for(int i = 0;i<10;i++) {
+            log.info(jobParameters.getParameters().toString());
+        }
+        return RepeatStatus.FINISHED;
+    }
+}
+```
+Finally, the native job runner ```CommandLineJobRunner``` dose not support ```ApplicationContextInitializer```, so we have to write another job runner [```SpringSeedBatchJobRunner```](https://github.com/profullstack/spring-seed/blob/master/src/main/java/com/profullstack/springseed/core/batch/SpringSeedBatchJobRunner.java). 
+```
+Usage: java -cp "batch/*" com.profullstack.springseed.core.batch.SpringSeedBatchJobRunner com.profullstack.springseed.sample.batch.configuration.BatchContextConfig sampleJob param1=value1
+```
 ### Web module
-TODO
+Just like the native Spring MVC , you can replace ```@EnableWebMvc``` with ```@EnableSpringSeedRestApiMvc``` to get those features provided by Spring Seed module.
+```java
+@Configuration
+@ComponentScan(basePackageClasses = {Apis.class})
+@EnableSpringSeedRestApiMvc(enableJwtConfig = @EnableJwtConfig(value=true, secretPropertyName="jwt.secret", expiration=10*60),
+	enableSwagger2 = true) //replace @EnableWebMvc
+public class ApiServletConfig extends WebMvcConfigurerAdapter {
+}
+```
+#### RESTful API error handler
+Provide a basic [```RestApiException```](https://github.com/profullstack/spring-seed/blob/master/src/main/java/com/profullstack/springseed/core/web/restapi/RestApiException.java) for you to throw Api exceptions, and all exceptions will be catched by [```RestApiExceptionAdvice```](https://github.com/profullstack/spring-seed/blob/master/src/main/java/com/profullstack/springseed/core/web/restapi/RestApiExceptionAdvice.java), then send a [```RestApiErrorResponse```](https://github.com/profullstack/spring-seed/blob/master/src/main/java/com/profullstack/springseed/core/web/restapi/RestApiErrorResponse.java) to client.
+#### HTTP Authorization Header Parser
+Provide a [```HttpAuthorizationHeaderParser```](https://github.com/profullstack/spring-seed/blob/master/src/main/java/com/profullstack/springseed/core/web/restapi/HttpAuthorizationHeaderParser.java) to parse the Authorization header, the header format follows the ref: http://www.ietf.org/rfc/rfc2617.txt
+```
+ * Implementation ref: http://www.ietf.org/rfc/rfc2617.txt
+ * schema: Authorization: Digest username="Mufasa",realm="testrealm@host.com" ....
+``` 
+#### HTTP RESTful API Token Implementation
+Provide a [```JwtTokenFactory```](https://github.com/profullstack/spring-seed/blob/master/src/main/java/com/profullstack/springseed/core/web/restapi/JwtTokenFactory.java) to implement the JSON Web Token standard, a non database based solution, check ref: https://en.wikipedia.org/wiki/JSON_Web_Token.  
+Another much simple token implementation ```SimpleAccessToken```, it's a database based solution.
+
 ### Gradle script support
 All build scripts are inside [here](https://github.com/profullstack/spring-seed/tree/master/src/main/resources/gradle-script). Use it like in the [sample project](https://github.com/profullstack/spring-seed/blob/master/sample/build.gradle):
 ```
