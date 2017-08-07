@@ -1,6 +1,6 @@
 ---
 layout: post
-title: [Spring]How to implement @Enable-* annotation and register beans dynamically
+title: "[Spring] How to implement @Enable-* annotation and register beans dynamically"
 category: programming
 ---
 We already know that Spring has a great plugin or module like system based on the ```@Enable-*``` annotation.
