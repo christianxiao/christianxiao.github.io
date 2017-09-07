@@ -56,7 +56,7 @@ public abstract class AdviceModeImportSelector<A extends Annotation> implements 
 	@Override
 	public final String[] selectImports(AnnotationMetadata importingClassMetadata) {
 ```
-The core method is the ```selectImports```, the returned String[] is the configuration classes that will imports the actual beans.
+The core method is the ```selectImports```, the returned String[] is the configuration classes that will import the actual beans.
 ### Then how are the configuration classes imported?
 Just check the code in the fisrt step:
 ```
@@ -98,15 +98,15 @@ public abstract class AbstractCachingConfiguration implements ImportAware {
 
 	protected CacheErrorHandler errorHandler;
 ```
-So, we get our first conclustion, the magic of **@Enable-*** is just a notification which will import a ```@Configuration``` class, and this class
-will import those actual beans, most of time you can just use the @Bean methods.
+So, we get our first conclusion, the magic of **@Enable-*** is just a notification which will import a ```@Configuration``` class, and this class
+will import those actual beans, most of the time you can just use the @Bean methods.
 ### But what if we want to register beans dynamically?
 For example, if you write your own @EnableDataSource annotation, and this annotation will import a Configuration class which has @Bean method to return a ```BasicDataSource```.
 Your DataSource bean will have the default name "dataSource", that's the common practice. But what if we want to support multiple dataSources?
 If your client code uses your annotation twice, then you will create two BasicDataSource beans with the same name, that's the problem. What's worse is that the
 @Bean annotation only accept static name as bean name, and we want to create the bean name provided by our client configuration. So we can't use the @Bean method.
 ### What we need is to register beans dynamically
-If we can register beans dynamically, then we cant set the bean name as we want.
+If we can register beans dynamically, then we can set the bean name as we want.
 Let's start from our original purpose, we need to write a **enable-* annotation to support multiple DataSource objects and configure their names dynamically.  
 First, we write our annotation like this:
 ```
@@ -144,7 +144,7 @@ public class SpringSeedJpa implements ImportBeanDefinitionRegistrar, ResourceLoa
 		String dataSourceName = beanNamePrefix.isEmpty()? "dataSource": beanNamePrefix + "DataSource";
 		registry.registerBeanDefinition(dataSourceName, builder.getBeanDefinition());
 ```
-The most import interface is the ```ImportBeanDefinitionRegistrar```, with this class can we register beans dynamically. Also note that how can
+The most important interface is the ```ImportBeanDefinitionRegistrar```, with this class we can register beans dynamically. Also note that how
 we get the annotation values from ```AnnotationAttributes```.  
 First, we use the **BeanDefinitionBuilder** to build a DataSource factory bean, then we set the parameters needed to construct this factory bean.
 Just like ordinary factory beans, this factory bean will build a real DataSource object.  
