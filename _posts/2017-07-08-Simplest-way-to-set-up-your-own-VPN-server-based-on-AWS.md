@@ -5,7 +5,7 @@ category: programming
 ---
 Your own VPN server = AWS EC2 + docker + L2TP image
 1. Register your AWS account
-2. Use the following EC2 userdata to launch a free tier Ubuntu EC2:
+2. Use the following EC2 userdata to launch a free tier Ubuntu EC2, you need to replace YOUR_SEC,YOUR_USERNAME,YOUR_PASSWORD:
 
 ```
 #!/bin/bash
