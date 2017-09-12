@@ -12,6 +12,7 @@ category: hotpot
 具体的要求大家可以点开链接，同时也可以，查找别的岗位，不限于监控（投监控当然最好啦）：
 
 监控开发工程师/专家：https://job.alibaba.com/zhaopin/position_detail.htm?positionId=35795
+
 行业监控工程师/专家：https://job.alibaba.com/zhaopin/position_detail.htm?positionId=25791
 
 Email: qitian.xqt@antfin.com
