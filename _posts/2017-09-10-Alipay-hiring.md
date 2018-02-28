@@ -19,6 +19,6 @@ Java岗位技术方面就是万年不变的Spring，还有设计模式，软件�
 
 行业监控工程师/专家：https://job.alibaba.com/zhaopin/position_detail.htm?positionId=25791
 
-Email: qitian.xqt@antfin.com
+Email: qitian.xqt@@@antfin.com
 
 经验两三年以上，主要P6及以上。希望大家不吝简历，一般周六面试，很快出结果的，不影响大家目前的工作。
