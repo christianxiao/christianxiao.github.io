@@ -1,11 +1,11 @@
 ---
 layout: post
-title: "[上海-支付宝-JAVA-急招-内推] 监控开发工程师/专家，行业监控工程师/专家"
+title: "[上海-支付宝-JAVA-急招-内推] 监控开发工程师/算法/专家，行业监控工程师/算法/专家"
 category: hotpot
 ---
 [上海-支付宝-JAVA-急招-内推] 监控开发工程师/专家，行业监控工程师/专家.
 
-我们属于行业技术部，现在的公交地铁扫码进站就是我们部门推出的，正在风口上，所以现在需要扩招，base 上海杭州都可以，无特殊要求。技术岗位需要后端，前端，测试，运维等方面的人才，我做java的，就只介绍一下java方面的，其实招聘对语言也没限制，python等都可以的。 
+我们属于行业技术部，现在的公交地铁扫码进站就是我们部门推出的，正在风口上，所以现在需要扩招，base 上海杭州都可以，无特殊要求。技术岗位需要后端，算法，前端，测试，运维等方面的人才，我做java的，就只介绍一下java方面的，其实招聘对语言也没限制，python等都可以的。 
 
 蚂蚁金服近期融资100亿美元，市值达到千亿美元，位居全球独角兽之首，第二名Uber估值600亿美元。所以，亲，现在加入，其实性价比很高的。
 
@@ -15,10 +15,10 @@ Java岗位技术方面就是万年不变的Spring，还有设计模式，软件�
 
 具体的要求大家可以点开链接，同时也可以，查找别的岗位，不限于监控（投监控当然最好啦）：
 
-监控开发工程师/专家：https://job.alibaba.com/zhaopin/position_detail.htm?positionId=35795
+监控开发工程师/算法/专家：https://job.alibaba.com/zhaopin/position_detail.htm?positionId=35795
 
-行业监控工程师/专家：https://job.alibaba.com/zhaopin/position_detail.htm?positionId=25791
+行业监控工程师/算法/专家：https://job.alibaba.com/zhaopin/position_detail.htm?positionId=25791
 
 Email: qitian.xqt@@@antfin.com
 
-经验两三年以上，主要P6及以上。希望大家不吝简历，一般周六面试，很快出结果的，不影响大家目前的工作。
+经验两三年以上，主要P6/7及以上。希望大家不吝简历，一般周六面试，很快出结果的，不影响大家目前的工作。
