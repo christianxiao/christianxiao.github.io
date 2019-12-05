@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "LC-median-of-two-sorted-arrays"
+title: "LC-Basic-quicksort-implement"
 category: programming
 ---
 Check out wikipedia
