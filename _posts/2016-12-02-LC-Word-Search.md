@@ -66,7 +66,7 @@ class Solution {
                     }
                 }
             }
-            return false;
+            return false;  
         }
         //loop neib of origin, board
         int line = origin[0];
