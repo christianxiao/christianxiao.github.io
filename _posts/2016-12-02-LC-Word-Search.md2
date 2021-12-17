@@ -71,7 +71,7 @@ class Solution {
         //loop neib of origin, board
         int line = origin[0];
         int col = origin[1];
-        int[][] neib = new int[][]{{line,col-1},{line,col+1},{line-1,col},{line+1, col}}; //left,right,top,bottom
+        int[][] neib = new int[][]\{\{\line,col-1},{line,col+1},{line-1,col},{line+1, col}}; //left,right,top,bottom
         for(int i=0;i<neib.length;i++){
             int line2 = neib[i][0];
             int col2 = neib[i][1];
