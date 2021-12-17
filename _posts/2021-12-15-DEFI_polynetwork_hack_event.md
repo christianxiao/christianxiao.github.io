@@ -1,9 +1,8 @@
 ---
 layout: post
-title: The Largest Hack Incident in DeFi's History: Polynetwork Exploit
+title: The Largest Hack Incident in DeFi's History- Polynetwork Exploit
 category: programming
 ---
-
 ### The Incident
 On August 10th, 2021, Poly Network was attacked by anonymous white hat hacker or hackers, causing over $610 million in digital crypto assets at the price of that date to be transferred to hacker-controlled addresses. Eventually, all assets were returned to Poly Network over the next 15 days. This was the largest security incident in DeFi's history in terms of the value of stolen assets at the price of that date.
 
