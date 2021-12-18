@@ -71,7 +71,7 @@ My Story 1 - 6, from this we can guess the hacker is white hat and not going to 
 <img width=50% height=50% src="https://user-images.githubusercontent.com/4775215/146585034-81071c25-acb3-42c2-bad5-b810bd87ba6a.png">
 <img width=50% height=50% src="https://user-images.githubusercontent.com/4775215/146585638-0d7584c5-8b69-4836-b9cd-0b0b570e4617.png">
 Story 2: I'm Angry!
-![image](https://user-images.githubusercontent.com/4775215/146585973-0a65eb4a-2a50-4f40-b02a-d3347b942984.png)
+<img width=50% height=50% src="https://user-images.githubusercontent.com/4775215/146585973-0a65eb4a-2a50-4f40-b02a-d3347b942984.png">
 Defi: Code is Law
 <img width=50% height=50% src="https://user-images.githubusercontent.com/4775215/146586166-19a0eec6-00bd-4e31-a57e-6fa5a72d0792.png">
 Worldwide Network Begger
