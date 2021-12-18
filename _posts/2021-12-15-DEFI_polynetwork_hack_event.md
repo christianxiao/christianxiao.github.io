@@ -23,10 +23,10 @@ Stolen Assets:
 
 ...
 ### News: 
-![image](https://user-images.githubusercontent.com/4775215/146314501-30ab8068-a0a0-480a-a170-5c7e99fa2cd7.png)
-![image](https://user-images.githubusercontent.com/4775215/146314315-3cb83474-eb87-406d-a249-b6a28ffe05b3.png)
-![image](https://user-images.githubusercontent.com/4775215/146314388-55b73706-5f0c-4883-a2e5-d59e468a9d64.png)
-![image](https://user-images.githubusercontent.com/4775215/146314476-2e5c1c82-4b3e-4cda-b351-608ef48a998e.png)
+<img width=50% height=50% src="https://user-images.githubusercontent.com/4775215/146314501-30ab8068-a0a0-480a-a170-5c7e99fa2cd7.png">
+<img width=50% height=50% src="https://user-images.githubusercontent.com/4775215/146314315-3cb83474-eb87-406d-a249-b6a28ffe05b3.png">
+<img width=50% height=50% src="https://user-images.githubusercontent.com/4775215/146314388-55b73706-5f0c-4883-a2e5-d59e468a9d64.png">
+<img width=50% height=50% src="https://user-images.githubusercontent.com/4775215/146314476-2e5c1c82-4b3e-4cda-b351-608ef48a998e.png">
 
 
 [Wiki](https://en.wikipedia.org/wiki/Poly_Network_exploit)
