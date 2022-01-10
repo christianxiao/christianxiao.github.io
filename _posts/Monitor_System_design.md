@@ -18,7 +18,7 @@ In each category there are many merchants, each of merchants built an app to pro
 But sometimes, the merchants' apps will fail to load, or the customers can't login to the app, or the payment does't work. Each these failure will cause the lose of
 money and the patience of customers. In order to solve these problems, the company need to build a incident platform.
 
-## The Platform defination
+## The Platform Goal Definition
 The business goal of Incident Platform: Improve the Stability of the Whole System（稳定性）.
 There are various ways to calculate Stability:
  - UV Stability = 1 - ImpactUsers/WholeUsers, for online business (影响用户数)
@@ -48,8 +48,8 @@ The core design of data handling is Log based and time series.
 
 ## The core design rules
 The system input data can be categorized into:
- - Real Time Data. Only logs, only handled by Flink.
- - Batch Data. SQL table data, Mysql, Hive, Kylin; ElasticSearch; Hbase.
+ - ***RealTime Data（实时数据）***. Only logs, only handled by Flink.
+ - ***Batch Data（批处理数据）***. SQL table data, Mysql, Hive, Kylin; ElasticSearch; Hbase.
 
 So, if a new app needs to served by our platform, it only needs to integrate with our data interface:
  - Write the code to add logs and config the format infomation. If a standard log format is used, the config process can be omitted.
@@ -59,5 +59,73 @@ Then all is done.
 
 The core components are Data Process System and Rule Detection System.
 
-## Data Flow
-For example, in the above company, if some of the merchant app fail, those merchant's payment service will be influenced. So the company wants to monitor this kind of situation, and choose **merchant payment number by minute** as the **monitor metric**.
+## The Key Concept Definition
+For example, in the above company, if some of the merchant app fail, those merchant's payment service will be influenced. So the company wants to monitor this kind of situation, the following steps taken.
+
+### Step 1: App business side to choose metrics and monitor rules
+- The first step for monitor is to ***choose the metrics(选择指标)***, including ***Realtime Metrics（实时指标）*** based on realtime data(实时数据), ***NON-Realtime Metrics(非实时指标)*** based on batch data(批处理数据). We choose ***merchant payment count by minute(商户)*** as the realtime metric
+- The Second step is to build ***monitor rules（监控规则）*** based on metrics, normally each metric should have one monitor rule.
+
+For example, we create 2 metrics:
+ - ***merchant payment count by minute(商户交易笔数每分钟)***：Realtime metric
+ - ***merchant payment count by day(商户每天交易笔数)***：NON-realtime metric
+
+And then create 3 monitor rules:
+- Merchant payment count less than 100 in last 3 miniutes: realtime fixed monitor rule
+- Merchant payment count suddenly drops: realtime smart monitor rule
+- On 8:00am, check merchant payment yesterday count less than 1000: non-realtime fixed monitor rule
+
+```
+ A metric is made of 3 components: 
+ - ***Dimension（维度）***: monitor who. If no dimension is defined, we choose ***sys(系统维度)*** as the default.
+ - ***Time(时间）***: monitor when.
+ - ***Value(指标值）***: monitor value.
+
+For example:
+- ***Merchant payment count by minute*** metric has merchantID as dimension, every minute as time, 300 or 400 as value.
+- ***Whole payment count by minute*** metric has sys as dimension, every minute as time, 3000 or 4000 as value.
+```
+```
+ A monitor rule is made of several components:
+ - Valid time（运行时间）. For example, only run at week days except weekends.
+ - Detect period(运行周期)：every minute，daily，weekly, etc.
+ - Dimension set: For example, manually input: only monitor merchants with ID 222,333; or sys as default; or imported from a table (select merchant_id from xx)
+ - Dimension blacklist set.
+ - Rule type(规则类型). Fixed rule(固定规则) or smart rule（智能规则）.
+ - Expression set: one or more expressions combined together with AND/OR logic. Fixed type expression has several property, for example, ***merchant payment count less than 100 in last 3 miniutes***:
+   - Metric (指标): merchant payment count in minute;
+   - Metric time span（指标时间跨度）: last 3 min;
+   - Metric time span operator(指标时间跨度运算符): sum, can also be average, etc;
+   - Metric compare operator(指标比较运算符): less than, can also be large, equal, etc;
+   - Threshold(阈值)：100，can also be percent 30%, etc;
+
+ - Smart rule has several properties: for example, ***merchant payment count suddenly drops***:
+   - Metric:
+   - Smart operator(智能运算符): suddenly drop（快速下跌）, can also be slowly drop（缓慢下跌）, suddenly rise（快速上升）, slowly rise（缓慢上升）, etc
+ - Non-disturb rule(防打扰规则). For example, alert ***3 times*** max in ***24 hours***.
+ ```
+ 
+ ### Step 2: App developers to Add monitor logs and provide batch data
+ #### Add monitor log
+ The developers decide to add this simple log after each payment process:
+ ```
+ time,paymentId,merchantId,customerId,amount,success or not
+ ```
+ For advanced usage, adding monitor log(埋点) can be based on ***Common Log Formatter(统一埋点规范)***. The log formatter can be categorized into frontend and bakened. The frontend formatter can refer to [Ali SPM standard](https://blog.blublu.site/2021/04/spm-scm-model/index.html).
+ ![image](https://user-images.githubusercontent.com/4775215/148730426-0967b0a9-cbc1-4136-a35b-81bd41abcb9d.png)
+
+#### Provide batch data
+The developers need to provide a mysql table which contains the merchant information, for example, merchantId, merchantName, city, address, business_category, etc. This information will make alert messages more readable.
+
+### Step 3: Notification config
+We need to config:
+- Who will receive the notification: commonly this data will be provided by HR system or CMDB;
+- Message channel: SMS, IM, phone, etc;
+- Message template: for each channel, the template will be slightly different, for example, phone call template should remove merchantId 2334233.
+- When: 8:00am - 8:00pm
+- Non-disturb rule(防打扰规则). For example, alert ***3 times*** max in ***24 hours***.
+- Data Dashboard link: to check what is happened
+- Incident dashboard link: to handle incident
+
+### Finally: Incident Data analysis Dashboard
+This is a report dashboard system, we can build all kinds of charts, tables, tabs just by draging and selecting the metrics. When incidents happend, people will visit this dashboard to find what happens.
