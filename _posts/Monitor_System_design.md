@@ -140,16 +140,61 @@ So, if a new app needs to served by our platform, it only needs to integrate wit
 Then all is done.
 
 ## Metric Management System
-Goal: Metric data management
+Goal: 
+- Metric data config management: Create/Update/Delete
+- Metric data storage: Hbase/OPENTSDB/Kylin/Elasticsearch
+- Metric data service: provide apis for other systems to query data
+
 Preset: App developers have add monitor logs and put logs into log fetch system.
-Upper system: log fetch system.
+
+Upstream system: log fetch system/MQ, or Mysql,Elasticsearch.
+Downstream: all other systems.
+
 
 ### Use case
 The user needs to select which app he belongs to before login to metric data system.
 
+#### Case 1: Data source Create
+##### Case 1.1: Realtime data source create
+User should fill in these configs:
+- Data source name
+- Data source type: log system, MQ
+- Data table path: for log system, this could be the app name and log file path; for MQ, this could be channel name;
+- Data parse script: split by ```,```, json formatter, Groovy parse script, etc.
+- Data schema: for each parsed field, need to give a name, and data type (string, int, float)
+ 
+##### Case 1.2: Batch data source create
+User should fill in these configs:
+- Data source name
+- Data source type: Mysql, Elasticsearch, etc.
+- Data table path: database name and table name;
+- Data fetch sql: optional, use the sql to filter unused fields or records
+- Data schema: for each parsed field, need to give a name, and data type (string, int, float)
+
+#### Case 2: Metric create
+User should fill in these configs:
+- Metric name
+- Data source id above
+- Dimension field: one or more fields in schema may be joined by a special delimiter (@#) to form a string key; if no field is selected, the default sys is used.
+- Value field: numberic field to get sum; for string id field to calculate UV/PV; or count as default;
+- PV/UV: for for string id field to calculate UV/PV;
+- Value time span: one minute;
+- Value operator: sum/average;
+
+#### Case 2: Metric data preview
+After the config is done, users can check whether the ouput data is expected.
 ### Demo Design
 TODO
 
 ### Implementation
+#### Realtime metric create
+After the metric config is done, a data fetch job is created:
+- for realtime metric, a Flink job is created; 
+- for batch data metric, a Datawarehouse job is created.
+
+The job will parse data and store data:
+- For metric data: store in Hbase, with the fields: （metricId, dimension）as rowkey, timestamp, value, value_max, value_min, value_mid. The last 3 values are used by smart algorithm to build models.
+- For full data storge: every record is stored in Kylin, used by Impact Analysis()
+
 ### QA
 
