@@ -70,36 +70,6 @@ And then create 3 monitor rules:
 - Merchant payment count less than 100 in last 3 miniutes: realtime fixed monitor rule
 - Merchant payment count suddenly drops: realtime smart monitor rule
 - On 8:00am, check merchant payment yesterday count less than 1000: non-realtime fixed monitor rule
-
-```
- A metric is made of 3 components: 
- - ***Dimension（维度）***: monitor who. If no dimension is defined, we choose ***sys(系统维度)*** as the default.
- - ***Time(时间）***: monitor when.
- - ***Value(指标值）***: monitor value.
-
-For example:
-- ***Merchant payment count by minute*** metric has merchantID as dimension, every minute as time, 300 or 400 as value.
-- ***Whole payment count by minute*** metric has sys as dimension, every minute as time, 3000 or 4000 as value.
-```
-```
- A monitor rule is made of several components:
- - Valid time（运行时间）. For example, only run at week days except weekends.
- - Detect period(运行周期)：every minute，daily，weekly, etc.
- - Dimension set: For example, manually input: only monitor merchants with ID 222,333; or sys as default; or imported from a table (select merchant_id from xx)
- - Dimension blacklist set.
- - Rule type(规则类型). Fixed rule(固定规则) or smart rule（智能规则）.
- - Expression set: one or more expressions combined together with AND/OR logic. Fixed type expression has several property, for example, ***merchant payment count less than 100 in last 3 miniutes***:
-   - Metric (指标): merchant payment count in minute;
-   - Metric time span（指标时间跨度）: last 3 min;
-   - Metric time span operator(指标时间跨度运算符): sum, can also be average, etc;
-   - Metric compare operator(指标比较运算符): less than, can also be large, equal, etc;
-   - Threshold(阈值)：100，can also be percent 30%, etc;
-
- - Smart rule has several properties: for example, ***merchant payment count suddenly drops***:
-   - Metric:
-   - Smart operator(智能运算符): suddenly drop（快速下跌）, can also be slowly drop（缓慢下跌）, suddenly rise（快速上升）, slowly rise（缓慢上升）, etc
- - Non-disturb rule(防打扰规则). For example, alert ***3 times*** max in ***24 hours***.
- ```
  
  ### Step 2: App developers to Add monitor logs and provide batch data
  #### Add monitor log
@@ -140,6 +110,7 @@ So, if a new app needs to served by our platform, it only needs to integrate wit
 Then all is done.
 
 ## Metric Management System
+
 Goal: 
 - Metric data config management: Create/Update/Delete
 - Metric data storage: Hbase/OPENTSDB/Kylin/Elasticsearch
@@ -148,8 +119,19 @@ Goal:
 Preset: App developers have add monitor logs and put logs into log fetch system.
 
 Upstream system: log fetch system/MQ, or Mysql,Elasticsearch.
-Downstream: all other systems.
 
+Downstream: monitor systems.
+
+```
+ A metric is made of 3 components: 
+ - ***Dimension（维度）***: monitor who. If no dimension is defined, we choose ***sys(系统维度)*** as the default.
+ - ***Time(时间）***: monitor when.
+ - ***Value(指标值）***: monitor value.
+
+For example:
+- ***Merchant payment count by minute(商户每分钟交易笔数)*** metric has merchantID as dimension, every minute as time, 300 or 400 as value.
+- ***Whole payment count by minute（所有商户每分钟交易笔数）*** metric has sys as dimension, every minute as time, 3000 or 4000 as value.
+```
 
 ### Use case
 The user needs to select which app he belongs to before login to metric data system.
@@ -187,14 +169,167 @@ After the config is done, users can check whether the ouput data is expected.
 TODO
 
 ### Implementation
-#### Realtime metric create
+#### Metric create
 After the metric config is done, a data fetch job is created:
 - for realtime metric, a Flink job is created; 
 - for batch data metric, a Datawarehouse job is created.
 
 The job will parse data and store data:
 - For metric data: store in Hbase, with the fields: （metricId, dimension）as rowkey, timestamp, value, value_max, value_min, value_mid. The last 3 values are used by smart algorithm to build models.
-- For full data storge: every record is stored in Kylin, used by Impact Analysis()
+- For full data storge: every record is stored in Kylin, used by Impact Analysis(影响面分析) to calculate PV/UV/Percent and by Root Cause Analysis(根因分析). Only store last 7 days data.
+- For full data search: optional, every record is stored in Elasticsearch.
 
-### QA
+### Important Notice
+- Flink jobs and datawarehouse jobs are easily failed. The reasons are:
+  - Log format is changed or bad syntax log come in.
+  - Suddenly large log data come in to cause CPU/MEM run in full load and GC, often caused by market activities.
+  - Bad Flink sql logic cause data shuffle unbalanced.
+- Count UV is a costly operation, may cause timeout problem, we should use HLL algorithm.
 
+### Table Schema
+Table: metric_config
+TODO
+
+Hbase table: metric_time
+TODO
+### Restful Api 
+PUT /metric/
+
+GET /metric/{id}
+
+GET /metric/data/{id} request parameters: startTime, endTime, metric_id, dim
+OpenTsdb restful api
+
+## Monitor System
+- Goal: 
+ - Monitor rule config management: Create/Update/Delete
+ - Generate Alert messages: MQ
+ - Restul service: provide restful apis for other systems to query data
+
+Preset: App developers have set up metric system configs.
+
+Upstream system: metric system.
+Downstream: incident process systems.
+
+
+A monitor rule is made of several components:
+ - Valid time（运行时间）. For example, only run at week days except weekends.
+ - Detect period(运行周期)：every minute，daily，weekly, etc.
+ - Dimension set: For example, manually input: only monitor merchants with ID 222,333; or sys as default; or imported from a table (select merchant_id from xx)
+ - Dimension blacklist set.
+ - Rule type(规则类型). Fixed rule(固定规则) or smart rule（智能规则）.
+ - Expression set: one or more expressions combined together with AND/OR logic. Fixed type expression has several property, for example, ***merchant payment count less than 100 in last 3 miniutes***:
+   - Metric (指标): merchant payment count in minute;
+   - Metric time span（指标时间跨度）: last 3 min;
+   - Metric time span operator(指标时间跨度运算符): sum, can also be average, etc;
+   - Metric compare operator(指标比较运算符): less than, can also be large, equal, etc;
+   - Threshold(阈值)：100，can also be percent 30%, etc;
+
+ - Smart rule has several properties: for example, ***merchant payment count suddenly drops***:
+   - Metric:
+   - Smart operator(智能运算符): suddenly drop（快速下跌）, can also be slowly drop（缓慢下跌）, suddenly rise（快速上升）, slowly rise（缓慢上升）, etc
+ - Non-disturb rule(防打扰规则). For example, alert ***3 times*** max in ***24 hours***.
+ 
+An alert message has several fields:
+ - ID
+ - RuleId
+ - Dimension
+ - Time
+ - Cause: which expression cause this alert.
+ - IsRecover
+ 
+ 
+### Use case
+The user needs to select which app he belongs to before login to metric data system.
+#### Case 1: Monitor Rule Create
+#### Case 2: Monitor rule check
+After the config is done, users can check whether the ouput data is expected.
+### Demo Design
+TODO 
+
+### Implementation
+#### Monitor Rule Create
+After the rule config is done, a monitor job is created. The job is ofen implement with ```Quartz``` library.
+If the monitor rules are too big or monitor dimensions are too big so one machine is out of load, then the job sharding should be implemented.
+### Important Notice
+- Be careful about rules number and dimensions number: will cause GC or system crash. System should set up limit when user create rules, for example, the max dimensions count should be less than 1000; or rule count should be less than 100.
+- Be careful about system threads usage.
+- Set up max alert count to stop the system. For example, if metric system fails, all metric will be zero, then almost every rule will alert.
+
+### Table Schema
+Table: monitor_rule_config
+TODO
+### Restful Api 
+PUT /metric/
+
+GET /monitor_rule/{id}
+
+## Monitor modeling System
+In practise, the modeling is implemented with Python.
+- Basic timing algorithm model, LSTL, ARIMA, IForest, etc.
+- Automatic model selection
+- User marking: to increase the accuracy of the model, and adapting to more business scenarios
+
+In order to provide the ability to locate the cause of the problem, in the future, it will be realized by adding curve clustering algorithms (upstream and downstream (isv, merchants), similar types (hospitals, schools)).
+
+
+## Incident Process System
+- Goal: 
+ - Incident notification config management: Create/Update/Delete
+ - Incident handling
+ - Restul service: provide restful apis for other systems to query data
+
+Preset: App developers have set up monitor system configs.
+
+Upstream system: monitor system.
+Downstream system: none.
+
+The notification configuration contains:
+- Monitor rule Id
+- Dimension Id
+- Who will receive the notification: commonly this data will be provided by HR system or CMDB;
+- Message channel: SMS, IM, phone, etc;
+- Message template: for each channel, the template will be slightly different, for example, phone call template should remove merchantId 2334233.
+- When: 8:00am - 8:00pm
+- Non-disturb rule(防打扰规则). For example, alert ***3 times*** max in ***24 hours***.
+- Data Dashboard link: to check what is happened
+- Incident dashboard link: to handle incident
+
+The incident lifecycle management contains:
+- fault generation, 
+- notification, 
+- response, 
+- (transfer) (optional), 
+- upgrade (optional), 
+- processing, 
+- fix, 
+- (review) (optional), 
+- and archiving.
+
+How to implement Impact Analysis:
+- For error type incidents: for example, js error. Get the visit log data source table from metric system, then
+ ```
+ TotalPv = count(user_id)
+ TotalUv = count(distinct user_id)
+ ImpactPv = count(user_id) where status = 'fail'
+ ImpactUv = count(distinct user_id) where status = 'success'
+ ImpactUvPercent = ImpactUv/TotalUv * 100%
+ ImpactPvPercent = ImpactPv/TotalPv * 100%
+ ```
+- For data lose type incidents: for example, system shutdown cause no one can visit our site, so there is no error log. Get the model data table from monitor system:
+ ```
+ TotalPv = select sum(forecast_value) from model_table where metric_id = xx and startTime = xx and endTime = xx
+ TotalUv = select forecast_value from model_table where metric_id = xx and startTime = xx and endTime = xx
+ ImpactPv = TotalPv - count(user_id) from visit_table
+ ImpactUv = TotalUv - count(distinct user_id)
+ ImpactUvPercent = ImpactUv/TotalUv * 100%
+ ImpactPvPercent = ImpactPv/TotalPv * 100%
+ ```
+ 
+How to implement Root Cause Analysis:
+ - Classification algorithm: decision trees and information entropy or curve clustering algorithms to select the most probable factors. In practice, it is implemented based on the OLAP platform explorer. For example, if the website cannot be accessed, by classifying the geographic location, it can be seen whether it is because of the network line. 
+ - Another is based on the similarity analysis of the historical fault database, through the historical fault speculation, in practice, it is implemented based on the search recommendation ES platform.
+
+
+### Report System
+This is a report dashboard system, we can build all kinds of charts, tables, tabs just by draging and selecting the metrics. When incidents happend, people will visit this dashboard to find what happens.
