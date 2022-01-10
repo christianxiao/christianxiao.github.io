@@ -43,10 +43,9 @@ In practice, the second way to more reliable and predictable than the first one.
 ITIL V3.0 (Information Technology Infrastructure Library) By IBM, HP, Government, etc.
 The part of Incident Management in ITIL.
 
-# System Architecture
-The core design of data handling is Log based and time series.
 
-## The core design rules
+# Use Case
+## The Key Concept Definition
 The system input data can be categorized into:
  - ***RealTime Data（实时数据）***. Only logs, only handled by Flink.
  - ***Batch Data（批处理数据）***. SQL table data, Mysql, Hive, Kylin; ElasticSearch; Hbase.
@@ -57,13 +56,10 @@ So, if a new app needs to served by our platform, it only needs to integrate wit
 
 Then all is done.
 
-The core components are Data Process System and Rule Detection System.
-
-## The Key Concept Definition
 For example, in the above company, if some of the merchant app fail, those merchant's payment service will be influenced. So the company wants to monitor this kind of situation, the following steps taken.
 
 ### Step 1: App business side to choose metrics and monitor rules
-- The first step for monitor is to ***choose the metrics(选择指标)***, including ***Realtime Metrics（实时指标）*** based on realtime data(实时数据), ***NON-Realtime Metrics(非实时指标)*** based on batch data(批处理数据). We choose ***merchant payment count by minute(商户)*** as the realtime metric
+- The first step for monitor is to ***choose the metrics(选择指标)***, including ***Realtime Metrics（实时指标）*** based on realtime data(实时数据), ***NON-Realtime Metrics(非实时指标)*** based on batch data(批处理数据). 
 - The Second step is to build ***monitor rules（监控规则）*** based on metrics, normally each metric should have one monitor rule.
 
 For example, we create 2 metrics:
@@ -129,3 +125,31 @@ We need to config:
 
 ### Finally: Incident Data analysis Dashboard
 This is a report dashboard system, we can build all kinds of charts, tables, tabs just by draging and selecting the metrics. When incidents happend, people will visit this dashboard to find what happens.
+
+# System Architecture
+
+## The core design rules
+The system input data can be categorized into:
+ - ***RealTime Data（实时数据）***. Logs, often handled by Flink.
+ - ***Batch Data（批处理数据）***. SQL table data, Mysql, Hive, Kylin; ElasticSearch; Hbase.
+
+So, if a new app needs to served by our platform, it only needs to integrate with our data interface:
+ - Write the code to add logs and config the format infomation. If a standard log format is used, the config process can be omitted.
+ - Config the name and schema of related table data.
+
+Then all is done.
+
+## Metric Management System
+Goal: Metric data management
+Preset: App developers have add monitor logs and put logs into log fetch system.
+Upper system: log fetch system.
+
+### Use case
+The user needs to select which app he belongs to before login to metric data system.
+
+### Demo Design
+TODO
+
+### Implementation
+### QA
+
